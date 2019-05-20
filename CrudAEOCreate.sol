@@ -295,7 +295,7 @@ contract CrudAEOCreate {
     return false;
    }
    function associateComm(uint256 partyIdAEO, string memory communicationNumberAEO, string memory communicationNumberTypeAEO)
-                             internal returns (bool) {
+                             public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyCommunication memory newMasterDataPartyCommunication= MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
@@ -327,7 +327,7 @@ contract CrudAEOCreate {
    }
    
     function associateAdditionalId(uint256 partyIdAEO, uint256 sequenceNumberAEO,  string memory additionalIdentificationCodeAEO, string memory additionalIdentificationIssuingCountryAEO)
-                             internal returns (bool) {
+                             public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
 
@@ -358,7 +358,7 @@ contract CrudAEOCreate {
    }
    
     function associateAdditionalDoc(uint256 partyIdAEO, string memory documentCategoryCodeAEO, string memory documentEffectiveDateAEO, string memory documentExpirationDateAEO, string memory additionalDocumentReferenceNumberAEO, string memory documentMessageStatusAEO, string memory additionalDocumentTypeAEO, string memory manufacturingLocationAEO)
-                             internal returns (bool) {
+                             public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
 
