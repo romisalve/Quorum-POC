@@ -1,8 +1,8 @@
 pragma solidity ^0.4.23;
 
-import "./CrudAEOCreate.sol" 
+import "./CrudAEOStructures.sol" ;
 
-contract CrudAEOUpdateAndDelete is CrudAEOCreate {
+contract CrudAEOUpdateAndDelete is CrudAEOStructures {
 
   /* Keep functional reference number and acts as if Create procedure is taking place for
   that master data Party. Delete that masterDataParty from the array
