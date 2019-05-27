@@ -87,7 +87,7 @@ contract CrudAEOUpdateAndDelete is CrudAEOStructures {
 
 }
 
-  function deleteAEO(string functionalReferenceNumberAEO, bytes32 currentDate)
+  function deleteAEO(string functionalReferenceNumberAEO, string currentDate)
                      public{
     require(masterDataPartiesExists[functionalReferenceNumberAEO]);
     //shows all fields of registered AEO, is calling the read operations
