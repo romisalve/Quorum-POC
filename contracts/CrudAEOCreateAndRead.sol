@@ -191,7 +191,7 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyCommunication memory newMasterDataPartyCommunication= MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
-    if(partiesContExists[partyIdAEO]){
+    if(partiesCommExists[partyIdAEO]){
 
        bool exists=false;
        uint partiesCommLength = partiesCommAEO[partyIdAEO].length;
