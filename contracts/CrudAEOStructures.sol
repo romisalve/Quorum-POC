@@ -1,8 +1,9 @@
 pragma solidity ^0.4.23;
 
-contract CrudAEOStructures {
+ 
+ library StructuresAndVariables{
 
-  struct MasterDataRecipient{
+   struct MasterDataRecipient{
     string recipientType; /* identify the type of regulatory office that
                 receives the Master Data*/
     string recipient;
@@ -74,31 +75,37 @@ contract CrudAEOStructures {
     string additionalDocumentType;
     string manufacturingLocation;
   }
+
+ }
+
+
+contract CrudAEOStructures {
+ 
    //mapping to save index associated to each functionalRefNumber
-   mapping (string=>uint256) masterDataAEOs;
+   mapping (string=>uint256) public masterDataAEOs;
    //mapping functionalReferenceNumber->MasterDataParty
-   mapping (string => MasterDataParty[]) masterDataPartiesAEO;
-   mapping (string => bool) masterDataPartiesExists;
+   mapping (string => StructuresAndVariables.MasterDataParty[]) public masterDataPartiesAEO;
+   mapping (string => bool) public masterDataPartiesExists;
    //mapping idAEO->Address
-   mapping (uint256 => MasterDataPartyAddress[]) addressesAEO;
-   mapping (uint256 => bool) addressExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAddress[]) public addressesAEO;
+   mapping (uint256 => bool) public addressExists;
    //mapping idAEO->MasterDataPartyContact
-   mapping (uint256 => MasterDataPartyContact[]) partiesContAEO;
-   mapping (uint256 => bool) partiesContExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyContact[]) public partiesContAEO;
+   mapping (uint256 => bool) public partiesContExists;
    //mapping contactName->MasterDataPartyContactComm
-   mapping (string => MasterDataPartyContactCommunication[]) partiesContCommAEO;
-   mapping (string => bool) partiesContCommExists;
+   mapping (string => StructuresAndVariables.MasterDataPartyContactCommunication[]) public partiesContCommAEO;
+   mapping (string => bool) public partiesContCommExists;
     //mapping idAEO->MasterDataPartyCommunication
-   mapping (uint256 => MasterDataPartyCommunication[]) partiesCommAEO;
-   mapping (uint256 => bool) partiesCommExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyCommunication[]) public partiesCommAEO;
+   mapping (uint256 => bool) public partiesCommExists;
    //mapping idAEO->AdditionalIdentifier
-   mapping (uint256 => MasterDataPartyAdditionalIdentifier[]) additionalIdentifiersAEO;
-   mapping (uint256 => bool) additionalIdentifiersExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalIdentifier[]) public additionalIdentifiersAEO;
+   mapping (uint256 => bool) public additionalIdentifiersExists;
    //mapping idAEO->AdditionalDocument
-   mapping (uint256 => MasterDataPartyAdditionalDocument[]) additionalDocumentsAEO;
-   mapping (uint256 => bool) additionalDocumentExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalDocument[]) public additionalDocumentsAEO;
+   mapping (uint256 => bool) public additionalDocumentExists;
    
-    AEOMasterData[] public AEOs;
+    StructuresAndVariables.AEOMasterData[] public AEOs;
 
    uint256 public totalAEOs;
 
@@ -112,5 +119,15 @@ contract CrudAEOStructures {
    event AEOExpDateUpdate(string AEOpartyName, string AEONewExpDate);
 
    event AEODelete(string AEOfunctionalReferenceNumber);
+
+   
+  function compareStrings (string a, string b) internal pure returns (bool){
+       return keccak256(a) == keccak256(b);
+  }   
+   
+   function getTotalAEOs() public view returns (uint256 length){
+      return AEOs.length;
+  }
+
 
    }
