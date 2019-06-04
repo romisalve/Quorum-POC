@@ -1,12 +1,15 @@
-var CrudAEOCreate = artifacts.require("./CrudAEOCreate.sol");
+var CrudAEOStructures= artifacts.require("./CrudAEOStructures.sol");
+var CrudAEOCreateAndRead= artifacts.require("./CrudAEOCreateAndRead.sol");
 var CrudAEOUpdateAndDelete = artifacts.require("./CrudAEOUpdateAndDelete.sol");
 
 module.exports = function(deployer){
 
-  deployer.deploy(CrudAEOStructures,{from: "0x1caFCe8fF232515Dcb07eE7901D49cFF8397eF7c"});
-  
-  deployer.deploy(CrudAEOUpdateAndDelete,{from: "0x1caFCe8fF232515Dcb07eE7901D49cFF8397eF7c"});
+  deployer.deploy(CrudAEOStructures,{from: "0x1caFCe8fF232515Dcb07eE7901D49cFF8397eF7c"}, {overwrite: false}).then(function() {
+  	return deployer.deploy(CrudAEOCreateAndRead, CrudAEOStructures.address, {from: "0x1caFCe8fF232515Dcb07eE7901D49cFF8397eF7c"});
 
-deployer.deploy(CrudAEOCreateAndRead,{from: "0x1caFCe8fF232515Dcb07eE7901D49cFF8397eF7c"});
+
+  });
+
+
 
 };
