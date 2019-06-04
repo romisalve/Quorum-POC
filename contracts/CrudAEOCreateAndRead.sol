@@ -2,8 +2,17 @@ pragma solidity ^0.4.23;
 
 import "./CrudAEOStructures.sol" ;
 
-contract CrudAEOCreateAndRead is CrudAEOStructures {
+import { StructuresAndVariables } from "./CrudAEOStructures.sol" ;
 
+
+contract CrudAEOCreateAndRead //is CrudAEOStructures 
+
+{
+
+constructor(address addressOfDeployedCrudAEOStructures) public {
+       // bytecode will be loaded into memory from an existing deployment
+       CrudAEOStructures public contractNeeded= CrudAEOStructures(addressOfDeployedCrudAEOStructures);
+   }
 
  function createMasterDataAEO (uint256 messageFunctionCodeAEO, string memory functionalReferenceNumberAEO, string memory documentNameAEO,
                                  string memory recipientTypeAEO, string memory recipientAEO,
@@ -12,24 +21,24 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
                                  public returns (uint256 newTotalAEOs){
     bool exists= false;
 
-   MasterDataRecipient memory newMasterDataRecipient= MasterDataRecipient(recipientTypeAEO, recipientAEO);
-    MasterDataSender memory newMasterDataSender= MasterDataSender(senderTypeAEO, senderAEO);
-    AEOMasterData memory newAEO = AEOMasterData(messageFunctionCodeAEO, functionalReferenceNumberAEO, documentNameAEO, newMasterDataRecipient, newMasterDataSender, endDateAEO);
+    StructuresAndVariables.MasterDataRecipient memory newMasterDataRecipient= StructuresAndVariables.MasterDataRecipient(recipientTypeAEO, recipientAEO);
+    StructuresAndVariables.MasterDataSender memory newMasterDataSender= StructuresAndVariables.MasterDataSender(senderTypeAEO, senderAEO);
+    StructuresAndVariables.AEOMasterData memory newAEO = StructuresAndVariables.AEOMasterData(messageFunctionCodeAEO, functionalReferenceNumberAEO, documentNameAEO, newMasterDataRecipient, newMasterDataSender, endDateAEO);
 
-    for(uint256 i =0; i< totalAEOs; i++){
-      if(compareStrings(AEOs[i].functionalReferenceNumber,functionalReferenceNumberAEO)){
+    for(uint256 i =0; i< contractNeeded.totalAEOs; i++){
+      if(compareStrings(contractNeeded.AEOs[i].functionalReferenceNumber,functionalReferenceNumberAEO)){
           exists=true;
         }
      }
       if (!exists){
-             AEOs.push(newAEO);
-             totalAEOs++;
-             masterDataAEOs[functionalReferenceNumberAEO]=totalAEOs;
+             contractNeeded.AEOs.push(newAEO);
+             contractNeeded.totalAEOs++;
+             contractNeeded.masterDataAEOs[functionalReferenceNumberAEO]=totalAEOs;
              //emit event
              emit AEOEvent (functionalReferenceNumberAEO, messageFunctionCodeAEO);
           }
 
-        return totalAEOs;
+        return contractNeeded.totalAEOs;
    }
    
     //associate a Master Data Party to a Master Data
@@ -41,11 +50,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     MasterDataParty memory newMasterDataParty= MasterDataParty(partyNameAEO, partyShortNameAEO, businessTypeAEO, partyIdAEO, identificationIssuingCountryAEO, roleCodeAEO);
 
 
-    if(masterDataPartiesExists[functionalReferenceNumberAEO]){
+    if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
 
        bool exists=false;
-       uint masterDataPartyLength =  masterDataPartiesAEO[functionalReferenceNumberAEO].length;
-       MasterDataParty[] memory temporaryMasterDataPartyArray= masterDataPartiesAEO[functionalReferenceNumberAEO];
+       uint masterDataPartyLength = contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].length;
+       MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
 
       for(uint256 i =0; i< masterDataPartyLength; i++){
         if(compareStrings(temporaryMasterDataPartyArray[i].partyName,partyNameAEO)){
@@ -54,14 +63,14 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-                masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
+                contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
                 return true;
           }
 
     } else{
 
-        masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
-        masterDataPartiesExists[functionalReferenceNumberAEO]=true;
+        contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
+        contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]=true;
         return true;
     }
 
@@ -72,19 +81,19 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
    function setExistanceForCertainId(uint256 idArray, uint256 id) internal{
 
     if(idArray==1){
-       addressExists[id]=true;
+       contractNeeded.addressExists[id]=true;
     }
     if(idArray==2){
-      partiesContExists[id]=true;
+      contractNeeded.partiesContExists[id]=true;
     }
     if(idArray==3){
-     partiesCommExists[id]=true;
+     contractNeeded.partiesCommExists[id]=true;
     }
     if(idArray==4){
-     additionalIdentifiersExists[id]=true;
+     contractNeeded.additionalIdentifiersExists[id]=true;
     }
     if(idArray==5){
-     additionalDocumentExists[id]=true;
+     contractNeeded.additionalDocumentExists[id]=true;
     }
    }
 
@@ -96,11 +105,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it         
     MasterDataPartyAddress memory newMasterDataPartyAddress= MasterDataPartyAddress(typeOfAddressAEO, cityNameAEO, countryCodeAEO, countryNameAEO, countrySubEntityIdentificationAEO, streetAEO, numberAEO, postCodeIdAEO);
 
-    if(addressExists[partyIdAEO]){
+    if(contractNeeded.addressExists[partyIdAEO]){
 
        //bool exists=false;
        uint addressLength = addressesAEO[partyIdAEO].length;
-       MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= addressesAEO[partyIdAEO];
+       MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.addressesAEO[partyIdAEO];
 
       for(uint256 i =0; i< addressLength; i++){
         if(compareStrings( temporaryMasterDataPartyAddressArray[i].street,  streetAEO) && (temporaryMasterDataPartyAddressArray[i].number==numberAEO)) {
@@ -109,14 +118,14 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         //if (!exists){
-                addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
+                contractNeeded.addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
                 return true;
           //}
 
     } else{
 
-        addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
-        setExistanceForCertainId(1,partyIdAEO);
+        contractNeeded.addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
+        contractNeeded.setExistanceForCertainId(1,partyIdAEO);
         return true;
     }
 
@@ -128,11 +137,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyContact memory newMasterDataPartyContact= MasterDataPartyContact(contactNameAEO,contactFunctionCodeAEO);
 
-    if(partiesContExists[partyIdAEO]){
+    if(contractNeeded.partiesContExists[partyIdAEO]){
 
        bool exists=false;
-       uint partiesContLength = partiesContAEO[partyIdAEO].length;
-       MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= partiesContAEO[partyIdAEO];
+       uint partiesContLength = contractNeeded.partiesContAEO[partyIdAEO].length;
+       MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.partiesContAEO[partyIdAEO];
 
       for(uint256 i =0; i< partiesContLength; i++){
         if(compareStrings( temporaryMasterDataPartyContactArray[i].contactName, contactNameAEO)){
@@ -141,14 +150,14 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-            partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
+            contractNeeded.partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
             return true;
           }
 
     } else{
 
-        partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
-        setExistanceForCertainId(2,partyIdAEO);
+        contractNeeded.partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
+        contractNeeded.setExistanceForCertainId(2,partyIdAEO);
         return true;
     }
 
@@ -160,11 +169,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyContactCommunication memory newMasterDataPartyContactCommunication= MasterDataPartyContactCommunication(communicationContNumberAEO,communicationContNumberTypeAEO);
 
-    if(partiesContCommExists[contactNameAEO]){
+    if(contractNeeded.partiesContCommExists[contactNameAEO]){
 
        bool exists=false;
-       uint partiesContCommLength = partiesContCommAEO[contactNameAEO].length;
-       MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= partiesContCommAEO[contactNameAEO];
+       uint partiesContCommLength = contractNeeded.partiesContCommAEO[contactNameAEO].length;
+       MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.partiesContCommAEO[contactNameAEO];
 
       for(uint256 i =0; i< partiesContCommLength; i++){
         if(compareStrings( temporaryMasterDataPartyContactCommArray[i].communicationNumber, communicationContNumberAEO)){
@@ -173,14 +182,14 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-            partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
+            contractNeeded.partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
             return true;
           }
 
     } else{
 
-        partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
-        partiesContCommExists[contactNameAEO]=true;
+        contractNeeded.partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
+        contractNeeded.partiesContCommExists[contactNameAEO]=true;
         return true;
     }
 
@@ -191,11 +200,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyCommunication memory newMasterDataPartyCommunication= MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
-    if(partiesCommExists[partyIdAEO]){
+    if(contractNeeded.partiesCommExists[partyIdAEO]){
 
        bool exists=false;
-       uint partiesCommLength = partiesCommAEO[partyIdAEO].length;
-       MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= partiesCommAEO[partyIdAEO];
+       uint partiesCommLength = contractNeeded.partiesCommAEO[partyIdAEO].length;
+       MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.partiesCommAEO[partyIdAEO];
 
       for(uint256 i =0; i< partiesCommLength; i++){
         if(compareStrings( temporaryMasterDataPartyCommArray[i].partyCommunicationNumber, communicationNumberAEO)){
@@ -204,14 +213,14 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-            partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
+            contractNeeded.partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
             return true;
           }
 
     } else{
 
-        partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
-        setExistanceForCertainId(3,partyIdAEO);
+        contractNeeded.partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
+        contractNeeded.setExistanceForCertainId(3,partyIdAEO);
         return true;
     }
 
@@ -223,11 +232,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
 
-    if(additionalIdentifiersExists[partyIdAEO]){
+    if(contractNeeded.additionalIdentifiersExists[partyIdAEO]){
 
        bool exists=false;
-       uint additionalIdLength = additionalIdentifiersAEO[partyIdAEO].length;
-       MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= additionalIdentifiersAEO[partyIdAEO];
+       uint additionalIdLength = contractNeeded.additionalIdentifiersAEO[partyIdAEO].length;
+       MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.additionalIdentifiersAEO[partyIdAEO];
 
       for(uint256 i =0; i< additionalIdLength; i++){
         if(temporaryMasterDataPartyAdditionalIdentifierArray[i].sequenceNumber == sequenceNumberAEO){
@@ -236,13 +245,13 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-            additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
+            contractNeeded.additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
             return true;
           }
 
     } else{
-        additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
-        setExistanceForCertainId(4,partyIdAEO);
+        contractNeeded.additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
+        contractNeeded.setExistanceForCertainId(4,partyIdAEO);
         return true;
     }
 
@@ -254,11 +263,11 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
 
-    if(additionalDocumentExists[partyIdAEO]){
+    if(contractNeeded.additionalDocumentExists[partyIdAEO]){
 
        bool exists=false;
-       uint additionalDocLength = additionalDocumentsAEO[partyIdAEO].length;
-       MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= additionalDocumentsAEO[partyIdAEO];
+       uint additionalDocLength = contractNeeded.additionalDocumentsAEO[partyIdAEO].length;
+       MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.additionalDocumentsAEO[partyIdAEO];
 
       for(uint256 i =0; i< additionalDocLength; i++){
         if(compareStrings(temporaryMasterDataPartyAdditionalDocumentArray[i].additionalDocumentReferenceNumber, additionalDocumentReferenceNumberAEO)){
@@ -267,13 +276,13 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
           }
        }
         if (!exists){
-            additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
+            contractNeeded.additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
             return true;
           }
 
     } else{
-        additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
-        setExistanceForCertainId(5,partyIdAEO);
+        contractNeeded.additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
+        contractNeeded.setExistanceForCertainId(5,partyIdAEO);
         return true;
     }
     return false;
@@ -285,10 +294,10 @@ contract CrudAEOCreateAndRead is CrudAEOStructures {
                                     string memory partyShortNameAEO, string memory businessTypeAEO, string memory identificationIssuingCountryAEO)
 {
 
-    if(masterDataPartiesExists[functionalReferenceNumberAEO]){
-      uint indexAEO=masterDataAEOs[functionalReferenceNumberAEO];
-      MasterDataParty[] memory temporaryMasterDataPartyArray= masterDataPartiesAEO[functionalReferenceNumberAEO];
-      endDateAEO=AEOs[indexAEO].endDate;
+    if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
+      uint indexAEO= contractNeeded.masterDataAEOs[functionalReferenceNumberAEO];
+      MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
+      endDateAEO= contractNeeded.AEOs[indexAEO].endDate;
       recipientAEO="Custom";
       //recipientAEO= AEOs[indexAEO].masterDataRec.recipient;
       for(uint256 i =0; i< temporaryMasterDataPartyArray.length; i++){
