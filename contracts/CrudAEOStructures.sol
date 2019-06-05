@@ -1,5 +1,7 @@
 pragma solidity ^0.4.23;
 
+pragma experimental ABIEncoderV2;
+
  
  library StructuresAndVariables{
 
@@ -107,15 +109,13 @@ contract CrudAEOStructures {
    
     StructuresAndVariables.AEOMasterData[] public AEOs;
 
-   uint256 public totalAEOs;
+   int256 public totalAEOs;
 
    constructor() public {
        totalAEOs = 0;
    }
 
-   event AEOEvent(string AEOfunctionalReferenceNumber, uint256 messageFunctionCodeAEO);
-
-   event AEOUNamepdate(string AEOpartyOldName , string AEOpartyNewName);
+  
    event AEOExpDateUpdate(string AEOpartyName, string AEONewExpDate);
 
    event AEODelete(string AEOfunctionalReferenceNumber);
@@ -128,6 +128,90 @@ contract CrudAEOStructures {
    function getTotalAEOs() public view returns (uint256 length){
       return AEOs.length;
   }
+
+  function retrieveFRN (int i) public view returns (string fnr){
+
+    return AEOs[i].functionalReferenceNumber; 
+
+  }
+
+  function retrievePartyName(StructuresAndVariables.MasterDataParty[] mdpArray, uint256 i)public view returns(string name){
+    return mdpArray[i].partyName; 
+  }
+
+  function increaseTotalAEOs () public{
+    totalAEOs= totalAEOs++;
+
+  }
+
+  function insertNewAEO (StructuresAndVariables.AEOMasterData newAEOToInsert) public{
+    AEOs.push(newAEOToInsert); 
+  }
+
+  function masterDataAEOsmapping (string fnr, uint256 i) public{
+     masterDataAEOs[fnr]=i; 
+  }
+
+  function masterDataPartiesAEOmapping (string fnr, StructuresAndVariables.MasterDataParty mdp) public{
+     masterDataPartiesAEO[fnr].push(mdp); 
+  }
+
+   function addressesAEOmapping (uint256 id, StructuresAndVariables.MasterDataPartyAddress mdpa) public{
+     addressesAEO[id].push(mdpa); 
+  }
+
+   function partiesContAEOmapping (uint256 id, StructuresAndVariables.MasterDataPartyContact mdpc) public{
+     partiesContAEO[id].push(mdpc); 
+  }
+
+   function partiesContCommAEOmapping (string fnr, StructuresAndVariables.MasterDataPartyContactCommunication mdpcc) public{
+     partiesContCommAEO[fnr].push(mdpcc); 
+  }
+
+   function partiesCommAEOmapping (uint256 id, StructuresAndVariables.MasterDataPartyCommunication mdpcom) public{
+     partiesCommAEO[id].push(mdpcom); 
+  }
+
+   function additionalIdentifiersAEOmapping (uint256 id, StructuresAndVariables.MasterDataPartyAdditionalIdentifier mdpai) public{
+     additionalIdentifiersAEO[id].push(mdpai); 
+  }
+
+   function additionalDocumentsAEOmapping (uint256 id, StructuresAndVariables.MasterDataPartyAdditionalDocument mdpad) public{
+     additionalDocumentsAEO[id].push(mdpad); 
+  }
+
+  function setExistanceForCertainId(uint256 idArray, uint256 id) public{
+
+    if(idArray==1){
+       addressExists[id]=true;
+    }
+    if(idArray==2){
+      partiesContExists[id]=true;
+    }
+    if(idArray==3){
+     partiesCommExists[id]=true;
+    }
+    if(idArray==4){
+     additionalIdentifiersExists[id]=true;
+    }
+    if(idArray==5){
+     additionalDocumentExists[id]=true;
+    }
+   }
+
+   function setExistance(uint256 id, string fnr) public{
+
+    if(id==1){
+       masterDataPartiesExists[fnr]=true; 
+    }
+    if(id==2){
+      partiesContCommExists[fnr]=true;
+    }
+    
+   }
+
+
+
 
 
    }
