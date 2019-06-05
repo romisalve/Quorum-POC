@@ -9,6 +9,12 @@ contract CrudAEOCreateAndRead //is CrudAEOStructures
 
 {
 
+event AEOEvent(string AEOfunctionalReferenceNumber, uint256 messageFunctionCodeAEO);
+
+event AEOUNamepdate(string AEOpartyOldName , string AEOpartyNewName);  
+
+CrudAEOStructures public contractNeeded;  
+
 constructor(address addressOfDeployedCrudAEOStructures) public {
        // bytecode will be loaded into memory from an existing deployment
        CrudAEOStructures public contractNeeded= CrudAEOStructures(addressOfDeployedCrudAEOStructures);
@@ -25,20 +31,21 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataSender memory newMasterDataSender= StructuresAndVariables.MasterDataSender(senderTypeAEO, senderAEO);
     StructuresAndVariables.AEOMasterData memory newAEO = StructuresAndVariables.AEOMasterData(messageFunctionCodeAEO, functionalReferenceNumberAEO, documentNameAEO, newMasterDataRecipient, newMasterDataSender, endDateAEO);
 
-    for(uint256 i =0; i< contractNeeded.totalAEOs; i++){
-      if(compareStrings(contractNeeded.AEOs[i].functionalReferenceNumber,functionalReferenceNumberAEO)){
+    for(uint256 i =0; i< contractNeeded.totalAEOs(); i++){
+
+      if(compareStrings(contractNeeded.retrieveFRN(i), functionalReferenceNumberAEO)){
           exists=true;
         }
      }
       if (!exists){
-             contractNeeded.AEOs.push(newAEO);
-             contractNeeded.totalAEOs++;
-             contractNeeded.masterDataAEOs[functionalReferenceNumberAEO]=totalAEOs;
+             contractNeeded.insertNewAEO(newAEO);
+             contractNeeded.increaseTotalAEOs();
+             contractNeeded.masterDataAEOsmapping(functionalReferenceNumberAEO,contractNeeded.totalAEOs());
              //emit event
              emit AEOEvent (functionalReferenceNumberAEO, messageFunctionCodeAEO);
           }
 
-        return contractNeeded.totalAEOs;
+        return contractNeeded.totalAEOs();
    }
    
     //associate a Master Data Party to a Master Data
@@ -47,30 +54,31 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
 
 
 
-    MasterDataParty memory newMasterDataParty= MasterDataParty(partyNameAEO, partyShortNameAEO, businessTypeAEO, partyIdAEO, identificationIssuingCountryAEO, roleCodeAEO);
+    StructuresAndVariables.MasterDataParty memory newMasterDataParty= StructuresAndVariables.MasterDataParty(partyNameAEO, partyShortNameAEO, businessTypeAEO, partyIdAEO, identificationIssuingCountryAEO, roleCodeAEO);
 
 
     if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
 
        bool exists=false;
        uint masterDataPartyLength = contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].length;
-       MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
+       StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
 
       for(uint256 i =0; i< masterDataPartyLength; i++){
-        if(compareStrings(temporaryMasterDataPartyArray[i].partyName,partyNameAEO)){
+        //aca posible cambio para retrieve name 
+        if(compareStrings(contractNeeded.retrievePartyName(temporaryMasterDataPartyArray,i),partyNameAEO)){
             exists=true;
             return false;
           }
        }
         if (!exists){
-                contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
+                contractNeeded.masterDataPartiesAEOmapping(functionalReferenceNumberAEO, newMasterDataParty);
                 return true;
           }
 
     } else{
 
-        contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].push(newMasterDataParty);
-        contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]=true;
+        contractNeeded.masterDataPartiesAEOmapping(functionalReferenceNumberAEO, newMasterDataParty);
+        contractNeeded.setExistance(1,functionalReferenceNumberAEO);
         return true;
     }
 
@@ -78,24 +86,7 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
    }
    
     //stack too deep compile error, couldnt set it inside func associate address
-   function setExistanceForCertainId(uint256 idArray, uint256 id) internal{
 
-    if(idArray==1){
-       contractNeeded.addressExists[id]=true;
-    }
-    if(idArray==2){
-      contractNeeded.partiesContExists[id]=true;
-    }
-    if(idArray==3){
-     contractNeeded.partiesCommExists[id]=true;
-    }
-    if(idArray==4){
-     contractNeeded.additionalIdentifiersExists[id]=true;
-    }
-    if(idArray==5){
-     contractNeeded.additionalDocumentExists[id]=true;
-    }
-   }
 
    //Associate an AddressAndContact to certain masterDataParty si le agrego un error da stack too deep compile error
    //Cant add return value, stack too deep error compile
@@ -103,28 +94,29 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     function associateAddress(uint256 partyIdAEO, string memory typeOfAddressAEO, string memory cityNameAEO, string memory countryCodeAEO, string memory countryNameAEO, string memory countrySubEntityIdentificationAEO, string memory streetAEO, uint256 numberAEO, string memory postCodeIdAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it         
-    MasterDataPartyAddress memory newMasterDataPartyAddress= MasterDataPartyAddress(typeOfAddressAEO, cityNameAEO, countryCodeAEO, countryNameAEO, countrySubEntityIdentificationAEO, streetAEO, numberAEO, postCodeIdAEO);
+    StructuresAndVariables.MasterDataPartyAddress memory newMasterDataPartyAddress= StructuresAndVariables.MasterDataPartyAddress(typeOfAddressAEO, cityNameAEO, countryCodeAEO, countryNameAEO, countrySubEntityIdentificationAEO, streetAEO, numberAEO, postCodeIdAEO);
 
     if(contractNeeded.addressExists[partyIdAEO]){
 
        //bool exists=false;
-       uint addressLength = addressesAEO[partyIdAEO].length;
-       MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.addressesAEO[partyIdAEO];
+       uint addressLength = contractNeeded.addressesAEO[partyIdAEO].length;
+       StructuresAndVariables.MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.addressesAEO[partyIdAEO];
 
       for(uint256 i =0; i< addressLength; i++){
+        //posible cambio retrieve address
         if(compareStrings( temporaryMasterDataPartyAddressArray[i].street,  streetAEO) && (temporaryMasterDataPartyAddressArray[i].number==numberAEO)) {
             //exists=true;
             return false;
           }
        }
         //if (!exists){
-                contractNeeded.addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
+                contractNeeded.addressesAEOmapping(partyIdAEO, newMasterDataPartyAddress);
                 return true;
           //}
 
     } else{
 
-        contractNeeded.addressesAEO[partyIdAEO].push(newMasterDataPartyAddress);
+        contractNeeded.addressesAEOmapping(partyIdAEO, newMasterDataPartyAddress);
         contractNeeded.setExistanceForCertainId(1,partyIdAEO);
         return true;
     }
@@ -135,13 +127,13 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
    function associateContact(uint256 partyIdAEO, string memory contactNameAEO, string memory contactFunctionCodeAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
-    MasterDataPartyContact memory newMasterDataPartyContact= MasterDataPartyContact(contactNameAEO,contactFunctionCodeAEO);
+    StructuresAndVariables.MasterDataPartyContact memory newMasterDataPartyContact= StructuresAndVariables.MasterDataPartyContact(contactNameAEO,contactFunctionCodeAEO);
 
     if(contractNeeded.partiesContExists[partyIdAEO]){
 
        bool exists=false;
        uint partiesContLength = contractNeeded.partiesContAEO[partyIdAEO].length;
-       MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.partiesContAEO[partyIdAEO];
+       StructuresAndVariables.MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.partiesContAEO[partyIdAEO];
 
       for(uint256 i =0; i< partiesContLength; i++){
         if(compareStrings( temporaryMasterDataPartyContactArray[i].contactName, contactNameAEO)){
@@ -150,13 +142,13 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
           }
        }
         if (!exists){
-            contractNeeded.partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
+            contractNeeded.partiesContAEOmapping(partyIdAEO,newMasterDataPartyContact);
             return true;
           }
 
     } else{
 
-        contractNeeded.partiesContAEO[partyIdAEO].push(newMasterDataPartyContact);
+        contractNeeded.partiesContAEOmapping(partyIdAEO,newMasterDataPartyContact);
         contractNeeded.setExistanceForCertainId(2,partyIdAEO);
         return true;
     }
@@ -167,13 +159,13 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
    function associateContactComm(string memory contactNameAEO, string memory communicationContNumberAEO, string memory communicationContNumberTypeAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
-    MasterDataPartyContactCommunication memory newMasterDataPartyContactCommunication= MasterDataPartyContactCommunication(communicationContNumberAEO,communicationContNumberTypeAEO);
+    StructuresAndVariables.MasterDataPartyContactCommunication memory newMasterDataPartyContactCommunication= StructuresAndVariables.MasterDataPartyContactCommunication(communicationContNumberAEO,communicationContNumberTypeAEO);
 
     if(contractNeeded.partiesContCommExists[contactNameAEO]){
 
        bool exists=false;
        uint partiesContCommLength = contractNeeded.partiesContCommAEO[contactNameAEO].length;
-       MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.partiesContCommAEO[contactNameAEO];
+       StructuresAndVariables.MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.partiesContCommAEO[contactNameAEO];
 
       for(uint256 i =0; i< partiesContCommLength; i++){
         if(compareStrings( temporaryMasterDataPartyContactCommArray[i].communicationNumber, communicationContNumberAEO)){
@@ -182,14 +174,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
           }
        }
         if (!exists){
-            contractNeeded.partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
+            contractNeeded.partiesContCommAEOmapping(contactNameAEO, newMasterDataPartyContactCommunication);
             return true;
           }
 
     } else{
 
-        contractNeeded.partiesContCommAEO[contactNameAEO].push(newMasterDataPartyContactCommunication);
-        contractNeeded.partiesContCommExists[contactNameAEO]=true;
+        contractNeeded.partiesContCommAEOmapping(contactNameAEO, newMasterDataPartyContactCommunication);
+        contractNeeded.setExistance(2,contactNameAEO);
         return true;
     }
 
@@ -198,28 +190,28 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
    function associateComm(uint256 partyIdAEO, string memory communicationNumberAEO, string memory communicationNumberTypeAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
-    MasterDataPartyCommunication memory newMasterDataPartyCommunication= MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
+    StructuresAndVariables.MasterDataPartyCommunication memory newMasterDataPartyCommunication= StructuresAndVariables.MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
     if(contractNeeded.partiesCommExists[partyIdAEO]){
 
        bool exists=false;
        uint partiesCommLength = contractNeeded.partiesCommAEO[partyIdAEO].length;
-       MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.partiesCommAEO[partyIdAEO];
+       StructuresAndVariables.MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.partiesCommAEO[partyIdAEO];
 
       for(uint256 i =0; i< partiesCommLength; i++){
-        if(compareStrings( temporaryMasterDataPartyCommArray[i].partyCommunicationNumber, communicationNumberAEO)){
+        if(compareStrings( temporaryMasterDataPartyC ommArray[i].partyCommunicationNumber, communicationNumberAEO)){
             exists=true;
             return false;
           }
        }
         if (!exists){
-            contractNeeded.partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
+            contractNeeded.partiesCommAEOmapping(partyIdAEO, newMasterDataPartyCommunication);
             return true;
           }
 
     } else{
 
-        contractNeeded.partiesCommAEO[partyIdAEO].push(newMasterDataPartyCommunication);
+        contractNeeded.partiesCommAEOmapping(partyIdAEO, newMasterDataPartyCommunication);
         contractNeeded.setExistanceForCertainId(3,partyIdAEO);
         return true;
     }
@@ -230,13 +222,13 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     function associateAdditionalId(uint256 partyIdAEO, uint256 sequenceNumberAEO,  string memory additionalIdentificationCodeAEO, string memory additionalIdentificationIssuingCountryAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
-    MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
+    StructuresAndVariables.MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= StructuresAndVariables.MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
 
     if(contractNeeded.additionalIdentifiersExists[partyIdAEO]){
 
        bool exists=false;
        uint additionalIdLength = contractNeeded.additionalIdentifiersAEO[partyIdAEO].length;
-       MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.additionalIdentifiersAEO[partyIdAEO];
+       StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.additionalIdentifiersAEO[partyIdAEO];
 
       for(uint256 i =0; i< additionalIdLength; i++){
         if(temporaryMasterDataPartyAdditionalIdentifierArray[i].sequenceNumber == sequenceNumberAEO){
@@ -245,12 +237,12 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
           }
        }
         if (!exists){
-            contractNeeded.additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
+            contractNeeded.additionalIdentifiersAEOmapping(partyIdAEO,newMasterDataPartyAdditionalIdentifier);
             return true;
           }
 
     } else{
-        contractNeeded.additionalIdentifiersAEO[partyIdAEO].push(newMasterDataPartyAdditionalIdentifier);
+        contractNeeded.additionalIdentifiersAEOmapping(partyIdAEO,newMasterDataPartyAdditionalIdentifier);
         contractNeeded.setExistanceForCertainId(4,partyIdAEO);
         return true;
     }
@@ -261,13 +253,13 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     function associateAdditionalDoc(uint256 partyIdAEO, string memory documentCategoryCodeAEO, string memory documentEffectiveDateAEO, string memory documentExpirationDateAEO, string memory additionalDocumentReferenceNumberAEO, string memory documentMessageStatusAEO, string memory additionalDocumentTypeAEO, string memory manufacturingLocationAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
-    MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
+    StructuresAndVariables.MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= StructuresAndVariables.MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
 
     if(contractNeeded.additionalDocumentExists[partyIdAEO]){
 
        bool exists=false;
        uint additionalDocLength = contractNeeded.additionalDocumentsAEO[partyIdAEO].length;
-       MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.additionalDocumentsAEO[partyIdAEO];
+       StructuresAndVariables.MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.additionalDocumentsAEO[partyIdAEO];
 
       for(uint256 i =0; i< additionalDocLength; i++){
         if(compareStrings(temporaryMasterDataPartyAdditionalDocumentArray[i].additionalDocumentReferenceNumber, additionalDocumentReferenceNumberAEO)){
@@ -276,12 +268,12 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
           }
        }
         if (!exists){
-            contractNeeded.additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
+            contractNeeded.additionalDocumentsAEOmapping(partyIdAEO,newMasterDataPartyAdditionalDocument);
             return true;
           }
 
     } else{
-        contractNeeded.additionalDocumentsAEO[partyIdAEO].push(newMasterDataPartyAdditionalDocument);
+        contractNeeded.additionalDocumentsAEOmapping(partyIdAEO,newMasterDataPartyAdditionalDocument);
         contractNeeded.setExistanceForCertainId(5,partyIdAEO);
         return true;
     }
@@ -296,7 +288,7 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
 
     if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
       uint indexAEO= contractNeeded.masterDataAEOs[functionalReferenceNumberAEO];
-      MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
+      StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
       endDateAEO= contractNeeded.AEOs[indexAEO].endDate;
       recipientAEO="Custom";
       //recipientAEO= AEOs[indexAEO].masterDataRec.recipient;
