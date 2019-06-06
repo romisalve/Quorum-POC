@@ -17,7 +17,7 @@ CrudAEOStructures public contractNeeded;
 
 constructor(address addressOfDeployedCrudAEOStructures) public {
        // bytecode will be loaded into memory from an existing deployment
-       CrudAEOStructures public contractNeeded= CrudAEOStructures(addressOfDeployedCrudAEOStructures);
+       contractNeeded= CrudAEOStructures(addressOfDeployedCrudAEOStructures);
    }
 
  function createMasterDataAEO (uint256 messageFunctionCodeAEO, string memory functionalReferenceNumberAEO, string memory documentNameAEO,
@@ -57,11 +57,11 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataParty memory newMasterDataParty= StructuresAndVariables.MasterDataParty(partyNameAEO, partyShortNameAEO, businessTypeAEO, partyIdAEO, identificationIssuingCountryAEO, roleCodeAEO);
 
 
-    if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
+    if(contractNeeded.checkExistance(1,functionalReferenceNumberAEO,0)){
 
        bool exists=false;
-       uint masterDataPartyLength = contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO].length;
-       StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
+       uint256 masterDataPartyLength = contractNeeded.getLenght(1,functionalReferenceNumberAEO,0);
+       StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.retrieveMasterDataPartyArray(functionalReferenceNumberAEO);
 
       for(uint256 i =0; i< masterDataPartyLength; i++){
         //aca posible cambio para retrieve name 
@@ -96,15 +96,15 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it         
     StructuresAndVariables.MasterDataPartyAddress memory newMasterDataPartyAddress= StructuresAndVariables.MasterDataPartyAddress(typeOfAddressAEO, cityNameAEO, countryCodeAEO, countryNameAEO, countrySubEntityIdentificationAEO, streetAEO, numberAEO, postCodeIdAEO);
 
-    if(contractNeeded.addressExists[partyIdAEO]){
+    if(contractNeeded.checkExistance(2,"",partyIdAEO)){
 
        //bool exists=false;
-       uint addressLength = contractNeeded.addressesAEO[partyIdAEO].length;
-       StructuresAndVariables.MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.addressesAEO[partyIdAEO];
+       uint256 addressLength = contractNeeded.getLenght(2,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.retrieveAddressesArray(partyIdAEO);
 
       for(uint256 i =0; i< addressLength; i++){
         //posible cambio retrieve address
-        if(compareStrings( temporaryMasterDataPartyAddressArray[i].street,  streetAEO) && (temporaryMasterDataPartyAddressArray[i].number==numberAEO)) {
+        if(compareStrings(contractNeeded.retrieveStreetAddress(temporaryMasterDataPartyAddressArray,i),streetAEO) && (contractNeeded.retrieveNumberAddress(temporaryMasterDataPartyAddressArray,i)==numberAEO)) {
             //exists=true;
             return false;
           }
@@ -129,14 +129,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyContact memory newMasterDataPartyContact= StructuresAndVariables.MasterDataPartyContact(contactNameAEO,contactFunctionCodeAEO);
 
-    if(contractNeeded.partiesContExists[partyIdAEO]){
+    if(contractNeeded.checkExistance(3,"",partyIdAEO)){
 
        bool exists=false;
-       uint partiesContLength = contractNeeded.partiesContAEO[partyIdAEO].length;
-       StructuresAndVariables.MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.partiesContAEO[partyIdAEO];
+       uint256 partiesContLength = contractNeeded.getLenght(3,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.retrievePartyContArray(partyIdAEO);
 
       for(uint256 i =0; i< partiesContLength; i++){
-        if(compareStrings( temporaryMasterDataPartyContactArray[i].contactName, contactNameAEO)){
+        if(compareStrings( contractNeeded.retrieveContactName(temporaryMasterDataPartyContactArray,i), contactNameAEO)){
             exists=true;
             return false;
           }
@@ -161,14 +161,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyContactCommunication memory newMasterDataPartyContactCommunication= StructuresAndVariables.MasterDataPartyContactCommunication(communicationContNumberAEO,communicationContNumberTypeAEO);
 
-    if(contractNeeded.partiesContCommExists[contactNameAEO]){
+    if(contractNeeded.checkExistance(4,contactNameAEO,0)){
 
        bool exists=false;
-       uint partiesContCommLength = contractNeeded.partiesContCommAEO[contactNameAEO].length;
-       StructuresAndVariables.MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.partiesContCommAEO[contactNameAEO];
+       uint256 partiesContCommLength = contractNeeded.getLenght(4,contactNameAEO,0);
+       StructuresAndVariables.MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.retrieveMasterDataPartyContCommArray(contactNameAEO);
 
       for(uint256 i =0; i< partiesContCommLength; i++){
-        if(compareStrings( temporaryMasterDataPartyContactCommArray[i].communicationNumber, communicationContNumberAEO)){
+        if(compareStrings(contractNeeded.retrieveCommNumber(temporaryMasterDataPartyContactCommArray,i), communicationContNumberAEO)){
             exists=true;
             return false;
           }
@@ -192,14 +192,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyCommunication memory newMasterDataPartyCommunication= StructuresAndVariables.MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
-    if(contractNeeded.partiesCommExists[partyIdAEO]){
+    if(contractNeeded.checkExistance(5,"",partyIdAEO)){
 
        bool exists=false;
-       uint partiesCommLength = contractNeeded.partiesCommAEO[partyIdAEO].length;
-       StructuresAndVariables.MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.partiesCommAEO[partyIdAEO];
+       uint256 partiesCommLength = contractNeeded.getLenght(5,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.retrieveMasterDataPartyCommArray(partyIdAEO);
 
       for(uint256 i =0; i< partiesCommLength; i++){
-        if(compareStrings( temporaryMasterDataPartyC ommArray[i].partyCommunicationNumber, communicationNumberAEO)){
+        if(compareStrings(contractNeeded.retrievePartyCommNumber(temporaryMasterDataPartyCommArray,i),communicationNumberAEO)){
             exists=true;
             return false;
           }
@@ -224,14 +224,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= StructuresAndVariables.MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
 
-    if(contractNeeded.additionalIdentifiersExists[partyIdAEO]){
+    if(contractNeeded.checkExistance(6,"",partyIdAEO)){
 
        bool exists=false;
-       uint additionalIdLength = contractNeeded.additionalIdentifiersAEO[partyIdAEO].length;
-       StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.additionalIdentifiersAEO[partyIdAEO];
+       uint256 additionalIdLength = contractNeeded.getLenght(6,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.retrieveMasterDataPartyAdIdArray(partyIdAEO);
 
       for(uint256 i =0; i< additionalIdLength; i++){
-        if(temporaryMasterDataPartyAdditionalIdentifierArray[i].sequenceNumber == sequenceNumberAEO){
+        if(contractNeeded.retrieveSequenceNumber(temporaryMasterDataPartyAdditionalIdentifierArray,i)== sequenceNumberAEO){
             exists=true;
             return false;
           }
@@ -255,14 +255,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= StructuresAndVariables.MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
 
-    if(contractNeeded.additionalDocumentExists[partyIdAEO]){
+    if(contractNeeded.checkExistance(7,"",partyIdAEO)){
 
        bool exists=false;
-       uint additionalDocLength = contractNeeded.additionalDocumentsAEO[partyIdAEO].length;
-       StructuresAndVariables.MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.additionalDocumentsAEO[partyIdAEO];
+       uint256 additionalDocLength = contractNeeded.getLenght(7,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.retrieveMasterDataPartyAdDocArray(partyIdAEO);
 
       for(uint256 i =0; i< additionalDocLength; i++){
-        if(compareStrings(temporaryMasterDataPartyAdditionalDocumentArray[i].additionalDocumentReferenceNumber, additionalDocumentReferenceNumberAEO)){
+        if(compareStrings(contractNeeded.retrieveADocRefNum(temporaryMasterDataPartyAdditionalDocumentArray,i), additionalDocumentReferenceNumberAEO)){
             exists=true;
             return false;
           }
@@ -286,17 +286,17 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
                                     string memory partyShortNameAEO, string memory businessTypeAEO, string memory identificationIssuingCountryAEO)
 {
 
-    if(contractNeeded.masterDataPartiesExists[functionalReferenceNumberAEO]){
-      uint indexAEO= contractNeeded.masterDataAEOs[functionalReferenceNumberAEO];
-      StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.masterDataPartiesAEO[functionalReferenceNumberAEO];
-      endDateAEO= contractNeeded.AEOs[indexAEO].endDate;
+    if(contractNeeded.checkExistance(1,functionalReferenceNumberAEO,0)){
+      uint256 indexAEO= contractNeeded.retrieveIndexAEO(functionalReferenceNumberAEO);
+      StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.retrieveMasterDataPartyArray(functionalReferenceNumberAEO);
+      endDateAEO= contractNeeded.retrieveEnDate(indexAEO);
       recipientAEO="Custom";
       //recipientAEO= AEOs[indexAEO].masterDataRec.recipient;
       for(uint256 i =0; i< temporaryMasterDataPartyArray.length; i++){
-        if(compareStrings(temporaryMasterDataPartyArray[i].partyName,partyNameAEO)){
-           partyShortNameAEO=temporaryMasterDataPartyArray[i].partyShortName;
-           businessTypeAEO=temporaryMasterDataPartyArray[i].businessType;
-           identificationIssuingCountryAEO=temporaryMasterDataPartyArray[i].identificationIssuingCountry;
+        if(compareStrings(contractNeeded.retrievePartyName(temporaryMasterDataPartyArray,i),partyNameAEO)){
+           partyShortNameAEO=contractNeeded.retrievePartyName(temporaryMasterDataPartyArray,i);
+           businessTypeAEO=contractNeeded.retrieveBusinessType(temporaryMasterDataPartyArray,i);
+           identificationIssuingCountryAEO=contractNeeded.retrieveIssuingCountry(temporaryMasterDataPartyArray,i);
        
           return (endDateAEO,recipientAEO,partyShortNameAEO,businessTypeAEO,identificationIssuingCountryAEO);
 
