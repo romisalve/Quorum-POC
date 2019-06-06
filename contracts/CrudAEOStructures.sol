@@ -109,7 +109,7 @@ contract CrudAEOStructures {
    
     StructuresAndVariables.AEOMasterData[] public AEOs;
 
-   int256 public totalAEOs;
+   uint256 public totalAEOs;
 
    constructor() public {
        totalAEOs = 0;
@@ -129,17 +129,65 @@ contract CrudAEOStructures {
       return AEOs.length;
   }
 
-  function retrieveFRN (int i) public view returns (string fnr){
+  function retrieveFRN (uint256 i) public view returns (string fnr){
 
     return AEOs[i].functionalReferenceNumber; 
-
   }
 
   function retrievePartyName(StructuresAndVariables.MasterDataParty[] mdpArray, uint256 i)public view returns(string name){
     return mdpArray[i].partyName; 
   }
 
-  function increaseTotalAEOs () public{
+  function retrievePartyShortName(StructuresAndVariables.MasterDataParty[] mdpArray, uint256 i)public view returns(string shortName){
+    return mdpArray[i].partyShortName; 
+  }
+
+  function retrieveBusinessType(StructuresAndVariables.MasterDataParty[] mdpArray, uint256 i)public view returns(string shortName){
+    return mdpArray[i].businessType; 
+  }
+
+  function retrieveIssuingCountry(StructuresAndVariables.MasterDataParty[] mdpArray, uint256 i)public view returns(string shortName){
+    return mdpArray[i].identificationIssuingCountry;
+  }
+
+  function retrieveStreetAddress(StructuresAndVariables.MasterDataPartyAddress[] mdpaArray, uint256 i)public view returns(string street){
+    return mdpaArray[i].street;
+  }
+
+  function retrieveNumberAddress(StructuresAndVariables.MasterDataPartyAddress[] mdpaArray, uint256 i)public view returns(uint256 number){
+    return mdpaArray[i].number;
+  }
+
+  function retrieveContactName(StructuresAndVariables.MasterDataPartyContact[] mdpcArray, uint256 i)public view returns(string contactName){
+    return mdpcArray[i].contactName;
+  }
+
+  function retrieveCommNumber(StructuresAndVariables.MasterDataPartyContactCommunication[] mdpccommArray, uint256 i)public view returns(string commNum){
+    return mdpccommArray[i].communicationNumber;
+  }
+
+  function retrievePartyCommNumber(StructuresAndVariables.MasterDataPartyCommunication[] mdpcommArray, uint256 i)public view returns(string partyCommNum){
+    return mdpcommArray[i].partyCommunicationNumber;
+  }
+
+  function retrieveSequenceNumber(StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] mdpaiArray, uint256 i)public view returns(uint256 seqNum){
+    return mdpaiArray[i].sequenceNumber;
+  }
+
+  function retrieveADocRefNum(StructuresAndVariables.MasterDataPartyAdditionalDocument[] mdpadArray, uint256 i)public view returns(string addDocRefNum){
+    return mdpadArray[i].additionalDocumentReferenceNumber;
+  }
+
+  function retrieveIndexAEO (string fnr) public returns (uint256 index) {
+    return masterDataAEOs[fnr];
+  }
+
+  function retrieveEnDate (uint256 id) public returns (string date) {
+    return AEOs[id].endDate;
+  }
+
+
+  function increaseTotalAEOs ()public{
     totalAEOs= totalAEOs++;
 
   }
@@ -210,8 +258,83 @@ contract CrudAEOStructures {
     
    }
 
-
-
-
+   function checkExistance(uint256 idArray, string key, uint256 keyInt)public view returns(bool answer){
+   
+    if(idArray==1){
+     return masterDataPartiesExists[key];
+    }
+    if(idArray==2){
+     return addressExists[keyInt];
+    }
+    if(idArray==3){
+     return partiesContExists[keyInt];
+    }
+    if(idArray==4){
+     return partiesContCommExists[key];
+    }
+    if(idArray==5){
+     return partiesCommExists[keyInt];
+    }
+    if(idArray==6){
+     return additionalIdentifiersExists[keyInt];
+    }
+    if(idArray==7){
+     return additionalDocumentExists[keyInt];
+    }    
 
    }
+
+   function getLenght (uint256 id, string key, uint256 keyInt) public returns (uint256 arrayLenght){
+    if(id==1){
+     return masterDataPartiesAEO[key].length;
+    }
+    if(id==2){
+     return addressesAEO[keyInt].length;
+    }
+    if(id==3){
+     return partiesContAEO[keyInt].length;
+    }
+    if(id==4){
+     return partiesContCommAEO[key].length;
+    }
+    if(id==5){
+     return partiesCommAEO[keyInt].length;
+    }
+    if(id==6){
+     return additionalIdentifiersAEO[keyInt].length;
+    }
+    if(id==7){
+     return additionalDocumentsAEO[keyInt].length;
+  }
+
+}
+
+  function retrieveMasterDataPartyArray (string key) public returns (StructuresAndVariables.MasterDataParty[] ){
+    return masterDataPartiesAEO[key];
+  }
+
+  function retrieveAddressesArray (uint256 key) public returns(StructuresAndVariables.MasterDataPartyAddress[]){
+    return addressesAEO[key];
+  }
+
+  function retrievePartyContArray (uint256 key) public returns(StructuresAndVariables.MasterDataPartyContact[]){
+    return partiesContAEO[key];
+  }
+
+  function retrieveMasterDataPartyContCommArray (string key) public returns(StructuresAndVariables.MasterDataPartyContactCommunication[]){
+    return partiesContCommAEO[key];
+  }
+
+  function retrieveMasterDataPartyCommArray (uint256 key) public returns(StructuresAndVariables.MasterDataPartyCommunication[]){
+    return partiesCommAEO[key];
+  }
+
+  function retrieveMasterDataPartyAdIdArray (uint256 key) public returns(StructuresAndVariables.MasterDataPartyAdditionalIdentifier[]){
+    return additionalIdentifiersAEO[key];
+  }
+
+  function retrieveMasterDataPartyAdDocArray (uint256 key) public returns(StructuresAndVariables.MasterDataPartyAdditionalDocument[]){
+    return additionalDocumentsAEO[key];
+  }
+
+ }
