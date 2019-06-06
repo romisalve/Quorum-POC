@@ -84,28 +84,28 @@ pragma experimental ABIEncoderV2;
 contract CrudAEOStructures {
  
    //mapping to save index associated to each functionalRefNumber
-   mapping (string=>uint256) public masterDataAEOs;
+   mapping (string=>uint256)  masterDataAEOs;
    //mapping functionalReferenceNumber->MasterDataParty
-   mapping (string => StructuresAndVariables.MasterDataParty[]) public masterDataPartiesAEO;
-   mapping (string => bool) public masterDataPartiesExists;
+   mapping (string => StructuresAndVariables.MasterDataParty[])  masterDataPartiesAEO;
+   mapping (string => bool)  masterDataPartiesExists;
    //mapping idAEO->Address
-   mapping (uint256 => StructuresAndVariables.MasterDataPartyAddress[]) public addressesAEO;
-   mapping (uint256 => bool) public addressExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAddress[])  addressesAEO;
+   mapping (uint256 => bool)  addressExists;
    //mapping idAEO->MasterDataPartyContact
-   mapping (uint256 => StructuresAndVariables.MasterDataPartyContact[]) public partiesContAEO;
-   mapping (uint256 => bool) public partiesContExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyContact[])  partiesContAEO;
+   mapping (uint256 => bool)  partiesContExists;
    //mapping contactName->MasterDataPartyContactComm
-   mapping (string => StructuresAndVariables.MasterDataPartyContactCommunication[]) public partiesContCommAEO;
-   mapping (string => bool) public partiesContCommExists;
+   mapping (string => StructuresAndVariables.MasterDataPartyContactCommunication[])  partiesContCommAEO;
+   mapping (string => bool)  partiesContCommExists;
     //mapping idAEO->MasterDataPartyCommunication
-   mapping (uint256 => StructuresAndVariables.MasterDataPartyCommunication[]) public partiesCommAEO;
-   mapping (uint256 => bool) public partiesCommExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyCommunication[])  partiesCommAEO;
+   mapping (uint256 => bool)  partiesCommExists;
    //mapping idAEO->AdditionalIdentifier
-   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalIdentifier[]) public additionalIdentifiersAEO;
-   mapping (uint256 => bool) public additionalIdentifiersExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalIdentifier[])  additionalIdentifiersAEO;
+   mapping (uint256 => bool)  additionalIdentifiersExists;
    //mapping idAEO->AdditionalDocument
-   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalDocument[]) public additionalDocumentsAEO;
-   mapping (uint256 => bool) public additionalDocumentExists;
+   mapping (uint256 => StructuresAndVariables.MasterDataPartyAdditionalDocument[])  additionalDocumentsAEO;
+   mapping (uint256 => bool)  additionalDocumentExists;
    
     StructuresAndVariables.AEOMasterData[] public AEOs;
 
