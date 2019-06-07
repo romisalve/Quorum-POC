@@ -337,4 +337,128 @@ contract CrudAEOStructures {
     return additionalDocumentsAEO[key];
   }
 
+
+    //retrieve functons give me error 
+   function checkMasterDataPartyExistance (string fnr, string partyNameAEO) public returns (bool exists){
+
+       exists=false;
+       uint256 masterDataPartyLength = getLenght(1,fnr,0);
+       StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= retrieveMasterDataPartyArray(fnr);
+
+      for(uint256 i =0; i< masterDataPartyLength; i++){
+        //aca posible cambio para retrieve name 
+        if(compareStrings(retrievePartyName(temporaryMasterDataPartyArray,i),partyNameAEO)){
+            exists=true;
+           // return false;
+          }
+       }
+       return exists;   
+   }
+
+   function checkAddressExistance(uint256 partyIdAEO,string streetAEO, uint256 numberAEO ) public returns (bool exists){
+        exists=false;
+       uint256 addressLength = getLenght(2,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= retrieveAddressesArray(partyIdAEO);
+
+      for(uint256 i =0; i< addressLength; i++){
+        
+        if(compareStrings(retrieveStreetAddress(temporaryMasterDataPartyAddressArray,i),streetAEO) && (retrieveNumberAddress(temporaryMasterDataPartyAddressArray,i)==numberAEO)) {
+            exists=true;
+            
+          }
+       }
+       return exists; 
+   }
+
+   function checkContactExistance(uint256 partyIdAEO, string contactNameAEO) public returns (bool exists){
+       exists=false;
+       uint256 partiesContLength = getLenght(3,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= retrievePartyContArray(partyIdAEO);
+
+      for(uint256 i =0; i< partiesContLength; i++){
+        if(compareStrings( retrieveContactName(temporaryMasterDataPartyContactArray,i), contactNameAEO)){
+            exists=true;
+            return false;
+          }
+   }
+   return exists;
+  }
+
+  function checkContCommExistance(string contactNameAEO, string communicationContNumberAEO) public returns (bool exists){
+       exists=false;
+       uint256 partiesContCommLength = getLenght(4,contactNameAEO,0);
+       StructuresAndVariables.MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= retrieveMasterDataPartyContCommArray(contactNameAEO);
+
+      for(uint256 i =0; i< partiesContCommLength; i++){
+        if(compareStrings(retrieveCommNumber(temporaryMasterDataPartyContactCommArray,i), communicationContNumberAEO)){
+            exists=true;
+            return false;
+          }
+       }
+       return exists;
+  }
+
+  function checkCommExistance(uint256 partyIdAEO,string communicationNumberAEO) public returns (bool exists){
+       exists=false;
+       uint256 partiesCommLength = getLenght(5,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= retrieveMasterDataPartyCommArray(partyIdAEO);
+
+      for(uint256 i =0; i< partiesCommLength; i++){
+        if(compareStrings(retrievePartyCommNumber(temporaryMasterDataPartyCommArray,i),communicationNumberAEO)){
+            exists=true;
+          }
+  }
+  return exists;
+}
+
+function checkAddIdExistance(uint256 partyIdAEO,uint256 sequenceNumberAEO) public returns (bool exists){
+       exists=false;
+       uint256 additionalIdLength = getLenght(6,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= retrieveMasterDataPartyAdIdArray(partyIdAEO);
+
+      for(uint256 i =0; i< additionalIdLength; i++){
+        if(retrieveSequenceNumber(temporaryMasterDataPartyAdditionalIdentifierArray,i)== sequenceNumberAEO){
+            exists=true;
+            return false;
+         }
+    }
+return exists;
+}
+
+function checkAddDocExistance(uint256 partyIdAEO,string additionalDocumentReferenceNumberAEO) public returns (bool exists){
+       exists=false;
+       uint256 additionalDocLength = getLenght(7,"",partyIdAEO);
+       StructuresAndVariables.MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= retrieveMasterDataPartyAdDocArray(partyIdAEO);
+
+      for(uint256 i =0; i< additionalDocLength; i++){
+        if(compareStrings(retrieveADocRefNum(temporaryMasterDataPartyAdditionalDocumentArray,i), additionalDocumentReferenceNumberAEO)){
+            exists=true;
+            return false;
+          }
+       }
+return exists;
+}
+
+function neededForReadOp(string functionalReferenceNumberAEO, string partyNameAEO) 
+                        public view returns(string endDateAEO, string memory recipientAEO,
+                                    string memory partyShortNameAEO, string memory businessTypeAEO, string memory identificationIssuingCountryAEO){
+  uint256 indexAEO= retrieveIndexAEO(functionalReferenceNumberAEO);
+  StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= retrieveMasterDataPartyArray(functionalReferenceNumberAEO);
+  endDateAEO= retrieveEnDate(indexAEO);
+  recipientAEO="Custom";
+      //recipientAEO= AEOs[indexAEO].masterDataRec.recipient;
+      for(uint256 i =0; i< temporaryMasterDataPartyArray.length; i++){
+        if(compareStrings(retrievePartyName(temporaryMasterDataPartyArray,i),partyNameAEO)){
+           partyShortNameAEO=retrievePartyName(temporaryMasterDataPartyArray,i);
+           businessTypeAEO=retrieveBusinessType(temporaryMasterDataPartyArray,i);
+           identificationIssuingCountryAEO=retrieveIssuingCountry(temporaryMasterDataPartyArray,i);
+       
+          return (endDateAEO,recipientAEO,partyShortNameAEO,businessTypeAEO,identificationIssuingCountryAEO);
+
+        }
+      }
+}
+
+  
+
  }
