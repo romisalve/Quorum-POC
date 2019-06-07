@@ -58,8 +58,9 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
 
 
     if(contractNeeded.checkExistance(1,functionalReferenceNumberAEO,0)){
+       bool exists=contractNeeded.checkMasterDataPartyExistance(functionalReferenceNumberAEO,partyNameAEO);
 
-       bool exists=false;
+      /* bool exists=false;
        uint256 masterDataPartyLength = contractNeeded.getLenght(1,functionalReferenceNumberAEO,0);
        StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.retrieveMasterDataPartyArray(functionalReferenceNumberAEO);
 
@@ -69,7 +70,10 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+       }*/
+        if(exists){
+          return false;
+        }
         if (!exists){
                 contractNeeded.masterDataPartiesAEOmapping(functionalReferenceNumberAEO, newMasterDataParty);
                 return true;
@@ -97,7 +101,9 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataPartyAddress memory newMasterDataPartyAddress= StructuresAndVariables.MasterDataPartyAddress(typeOfAddressAEO, cityNameAEO, countryCodeAEO, countryNameAEO, countrySubEntityIdentificationAEO, streetAEO, numberAEO, postCodeIdAEO);
 
     if(contractNeeded.checkExistance(2,"",partyIdAEO)){
-
+       bool exists=contractNeeded.checkAddressExistance(partyIdAEO,streetAEO,numberAEO);
+       
+       /*
        //bool exists=false;
        uint256 addressLength = contractNeeded.getLenght(2,"",partyIdAEO);
        StructuresAndVariables.MasterDataPartyAddress[] memory temporaryMasterDataPartyAddressArray= contractNeeded.retrieveAddressesArray(partyIdAEO);
@@ -108,11 +114,16 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             //exists=true;
             return false;
           }
-       }
-        //if (!exists){
+              */
+        
+
+        if(exists){
+          return false;
+        }
+        if (!exists){
                 contractNeeded.addressesAEOmapping(partyIdAEO, newMasterDataPartyAddress);
                 return true;
-          //}
+          }
 
     } else{
 
@@ -130,7 +141,9 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataPartyContact memory newMasterDataPartyContact= StructuresAndVariables.MasterDataPartyContact(contactNameAEO,contactFunctionCodeAEO);
 
     if(contractNeeded.checkExistance(3,"",partyIdAEO)){
-
+      bool exists=contractNeeded.checkContactExistance(partyIdAEO,contactNameAEO);
+       
+      /*
        bool exists=false;
        uint256 partiesContLength = contractNeeded.getLenght(3,"",partyIdAEO);
        StructuresAndVariables.MasterDataPartyContact[] memory temporaryMasterDataPartyContactArray= contractNeeded.retrievePartyContArray(partyIdAEO);
@@ -140,7 +153,12 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+
+          */
+       
+       if(exists){
+          return false;
+        }
         if (!exists){
             contractNeeded.partiesContAEOmapping(partyIdAEO,newMasterDataPartyContact);
             return true;
@@ -162,7 +180,8 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataPartyContactCommunication memory newMasterDataPartyContactCommunication= StructuresAndVariables.MasterDataPartyContactCommunication(communicationContNumberAEO,communicationContNumberTypeAEO);
 
     if(contractNeeded.checkExistance(4,contactNameAEO,0)){
-
+      bool exists=contractNeeded.checkContCommExistance(contactNameAEO,communicationContNumberAEO);
+       /*
        bool exists=false;
        uint256 partiesContCommLength = contractNeeded.getLenght(4,contactNameAEO,0);
        StructuresAndVariables.MasterDataPartyContactCommunication[] memory temporaryMasterDataPartyContactCommArray= contractNeeded.retrieveMasterDataPartyContCommArray(contactNameAEO);
@@ -172,7 +191,12 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+
+          */
+       
+       if(exists){
+          return false;
+        }       
         if (!exists){
             contractNeeded.partiesContCommAEOmapping(contactNameAEO, newMasterDataPartyContactCommunication);
             return true;
@@ -193,7 +217,8 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataPartyCommunication memory newMasterDataPartyCommunication= StructuresAndVariables.MasterDataPartyCommunication(communicationNumberAEO,communicationNumberTypeAEO);
 
     if(contractNeeded.checkExistance(5,"",partyIdAEO)){
-
+      bool exists=contractNeeded.checkCommExistance(partyIdAEO,communicationContNumberAEO);
+      /*
        bool exists=false;
        uint256 partiesCommLength = contractNeeded.getLenght(5,"",partyIdAEO);
        StructuresAndVariables.MasterDataPartyCommunication[] memory temporaryMasterDataPartyCommArray= contractNeeded.retrieveMasterDataPartyCommArray(partyIdAEO);
@@ -203,7 +228,10 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+       }*/
+       if(exists){
+          return false;
+        }       
         if (!exists){
             contractNeeded.partiesCommAEOmapping(partyIdAEO, newMasterDataPartyCommunication);
             return true;
@@ -219,13 +247,14 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     return false;
    }
    
-    function associateAdditionalId(uint256 partyIdAEO, uint256 sequenceNumberAEO,  string memory additionalIdentificationCodeAEO, string memory additionalIdentificationIssuingCountryAEO)
+    function associateAdditionalId(uint256 partyIdAEO, uint256 sequenceNumberAEO,string memory additionalIdentificationCodeAEO, string memory additionalIdentificationIssuingCountryAEO)
                              public returns (bool) {
     //A variable declaration could be avoided by setting the struct directly when pushing it
     StructuresAndVariables.MasterDataPartyAdditionalIdentifier memory newMasterDataPartyAdditionalIdentifier= StructuresAndVariables.MasterDataPartyAdditionalIdentifier(sequenceNumberAEO,additionalIdentificationCodeAEO,additionalIdentificationIssuingCountryAEO);
 
     if(contractNeeded.checkExistance(6,"",partyIdAEO)){
-
+      bool exists=contractNeeded.checkAddIdExistance(partyIdAEO,sequenceNumberAEO);
+      /*
        bool exists=false;
        uint256 additionalIdLength = contractNeeded.getLenght(6,"",partyIdAEO);
        StructuresAndVariables.MasterDataPartyAdditionalIdentifier[] memory temporaryMasterDataPartyAdditionalIdentifierArray= contractNeeded.retrieveMasterDataPartyAdIdArray(partyIdAEO);
@@ -235,7 +264,10 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+       }*/
+        if(exists){
+          return false;
+        }
         if (!exists){
             contractNeeded.additionalIdentifiersAEOmapping(partyIdAEO,newMasterDataPartyAdditionalIdentifier);
             return true;
@@ -256,7 +288,8 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
     StructuresAndVariables.MasterDataPartyAdditionalDocument memory newMasterDataPartyAdditionalDocument= StructuresAndVariables.MasterDataPartyAdditionalDocument(documentCategoryCodeAEO,documentEffectiveDateAEO,documentExpirationDateAEO, additionalDocumentReferenceNumberAEO, documentMessageStatusAEO, additionalDocumentTypeAEO, manufacturingLocationAEO);
 
     if(contractNeeded.checkExistance(7,"",partyIdAEO)){
-
+      bool exists=contractNeeded.checkAddDocExistance(partyIdAEO,additionalDocumentReferenceNumberAEO);
+      /*
        bool exists=false;
        uint256 additionalDocLength = contractNeeded.getLenght(7,"",partyIdAEO);
        StructuresAndVariables.MasterDataPartyAdditionalDocument[] memory temporaryMasterDataPartyAdditionalDocumentArray= contractNeeded.retrieveMasterDataPartyAdDocArray(partyIdAEO);
@@ -266,7 +299,10 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
             exists=true;
             return false;
           }
-       }
+       } */
+        if(exists){
+          return false;
+        }
         if (!exists){
             contractNeeded.additionalDocumentsAEOmapping(partyIdAEO,newMasterDataPartyAdditionalDocument);
             return true;
@@ -286,6 +322,9 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
                                     string memory partyShortNameAEO, string memory businessTypeAEO, string memory identificationIssuingCountryAEO)
 {
 
+  return contractNeeded.neededForReadOp(functionalReferenceNumberAEO,partyNameAEO);
+  /*
+
     if(contractNeeded.checkExistance(1,functionalReferenceNumberAEO,0)){
       uint256 indexAEO= contractNeeded.retrieveIndexAEO(functionalReferenceNumberAEO);
       StructuresAndVariables.MasterDataParty[] memory temporaryMasterDataPartyArray= contractNeeded.retrieveMasterDataPartyArray(functionalReferenceNumberAEO);
@@ -302,10 +341,11 @@ constructor(address addressOfDeployedCrudAEOStructures) public {
 
         }
       }
+      */
     revert('AEO not found');
 
   }
-}
+
 
    function compareStrings (string memory a, string memory b) internal pure returns (bool){
        return keccak256(abi.encode(a)) == keccak256(abi.encode(b));
