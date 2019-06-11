@@ -2,19 +2,19 @@ pragma solidity ^0.4.23;
 
 pragma experimental ABIEncoderV2;
 
- 
+/*
  library StructuresAndVariables{
 
    struct MasterDataRecipient{
     string recipientType; /* identify the type of regulatory office that
                 receives the Master Data*/
-    string recipient;
+ /*   string recipient;
   }
 
   struct MasterDataSender{
     string senderType; /* identify the type of regulatory office that
                 sends the Master Data*/
-    string sender;
+   /* string sender;
   }
 
   struct MasterDataParty{
@@ -30,7 +30,7 @@ pragma experimental ABIEncoderV2;
     uint256 messageFunctionCode;
     string functionalReferenceNumber; /*Reference number identifying a
                       specific information exchange*/
-    string documentName;
+   /* string documentName;
    MasterDataRecipient masterDataRec;
    MasterDataSender masterDataSen;
     string endDate;
@@ -79,6 +79,8 @@ pragma experimental ABIEncoderV2;
   }
 
  }
+
+ */ 
 
 
 contract CrudAEOStructures {
