@@ -2,7 +2,7 @@ pragma solidity ^0.4.23;
 
 import "./CrudAEOStructures.sol" ;
 
-import { StructuresAndVariables } from "./CrudAEOStructures.sol" ;
+import { StructuresAndVariables } from "./StructuresAndVariables.sol" ;
 
 
 contract CrudAEOCreateAndRead //is CrudAEOStructures 
