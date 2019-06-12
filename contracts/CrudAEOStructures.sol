@@ -81,6 +81,7 @@ pragma experimental ABIEncoderV2;
  }
 
  */ 
+import { StructuresAndVariables } from "./StructuresAndVariables.sol" ;
 
 
 contract CrudAEOStructures {
